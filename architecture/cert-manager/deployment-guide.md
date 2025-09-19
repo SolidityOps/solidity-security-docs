@@ -8,13 +8,18 @@ This guide will walk you through deploying cert-manager to Kubernetes using Kust
 - kubectl configured
 - kustomize (built into kubectl 1.14+)
 
+## Repository Location
+
+All cert-manager files should be created in the **`solidity-security-infrastructure`** repository.
+
 ## Directory Structure
 
-Create the following directory structure in your repository:
+Create the following directory structure in the `solidity-security-infrastructure` repository:
 
 ```
-k8s/
-├── cert-manager/
+solidity-security-infrastructure/
+└── k8s/
+    └── cert-manager/
 │   ├── base/
 │   │   ├── kustomization.yaml
 │   │   ├── namespace.yaml
@@ -59,7 +64,7 @@ k8s/
 │   │       ├── service.yaml
 │   │       └── servicemonitor.yaml
 │   └── overlays/
-│       ├── staging/
+│               ├── staging/
 │       │   ├── kustomization.yaml
 │       │   ├── resource-limits.yaml
 │       │   └── letsencrypt-staging-issuer.yaml
@@ -70,16 +75,23 @@ k8s/
 │           └── monitoring.yaml
 ```
 
+## File Locations
+
+**Repository**: `solidity-security-infrastructure`
+
+All files should be created under: `solidity-security-infrastructure/k8s/cert-manager/`
+
 ## Deployment Steps
 
 ### Step 1: Create Base Namespace Configuration
 
-Create the cert-manager namespace configuration:
-- `k8s/cert-manager/base/namespace.yaml`
+**Repository**: `solidity-security-infrastructure`
+**File Location**: `k8s/cert-manager/base/namespace.yaml`
 
 ### Step 2: Set Up Custom Resource Definitions (CRDs)
 
-Create all required CRDs for cert-manager:
+**Repository**: `solidity-security-infrastructure`
+**File Locations**:
 - `k8s/cert-manager/base/crds/kustomization.yaml`
 - `k8s/cert-manager/base/crds/certificaterequests.yaml`
 - `k8s/cert-manager/base/crds/certificates.yaml`
@@ -90,7 +102,8 @@ Create all required CRDs for cert-manager:
 
 ### Step 3: Configure RBAC
 
-Set up all required RBAC configurations:
+**Repository**: `solidity-security-infrastructure`
+**File Locations**:
 - `k8s/cert-manager/base/rbac/kustomization.yaml`
 - `k8s/cert-manager/base/rbac/serviceaccount.yaml`
 - `k8s/cert-manager/base/rbac/clusterrole.yaml`
@@ -101,7 +114,8 @@ Set up all required RBAC configurations:
 
 ### Step 4: Deploy Cert-Manager Controller
 
-Configure the main cert-manager controller:
+**Repository**: `solidity-security-infrastructure`
+**File Locations**:
 - `k8s/cert-manager/base/controller/kustomization.yaml`
 - `k8s/cert-manager/base/controller/deployment.yaml`
 - `k8s/cert-manager/base/controller/service.yaml`
@@ -109,7 +123,8 @@ Configure the main cert-manager controller:
 
 ### Step 5: Deploy Cert-Manager Webhook
 
-Set up the admission webhook:
+**Repository**: `solidity-security-infrastructure`
+**File Locations**:
 - `k8s/cert-manager/base/webhook/kustomization.yaml`
 - `k8s/cert-manager/base/webhook/deployment.yaml`
 - `k8s/cert-manager/base/webhook/service.yaml`
@@ -123,7 +138,8 @@ Set up the admission webhook:
 
 ### Step 6: Deploy CA Injector
 
-Configure the CA injector component:
+**Repository**: `solidity-security-infrastructure`
+**File Locations**:
 - `k8s/cert-manager/base/cainjector/kustomization.yaml`
 - `k8s/cert-manager/base/cainjector/deployment.yaml`
 - `k8s/cert-manager/base/cainjector/serviceaccount.yaml`
@@ -134,59 +150,85 @@ Configure the CA injector component:
 
 ### Step 7: Create Base Kustomization
 
-Tie everything together with the base kustomization:
-- `k8s/cert-manager/base/kustomization.yaml`
+**Repository**: `solidity-security-infrastructure`
+**File Location**: `k8s/cert-manager/base/kustomization.yaml`
 
 ### Step 8: Set Up Environment Overlays
 
 #### Staging Environment
-Create staging-specific configurations:
+**Repository**: `solidity-security-infrastructure`
+**File Locations**:
 - `k8s/cert-manager/overlays/staging/kustomization.yaml`
 - `k8s/cert-manager/overlays/staging/resource-limits.yaml`
 - `k8s/cert-manager/overlays/staging/letsencrypt-staging-issuer.yaml`
 
 #### Production Environment
-Create production-specific configurations:
+**Repository**: `solidity-security-infrastructure`
+**File Locations**:
 - `k8s/cert-manager/overlays/production/kustomization.yaml`
 - `k8s/cert-manager/overlays/production/resource-limits.yaml`
 - `k8s/cert-manager/overlays/production/letsencrypt-prod-issuer.yaml`
 - `k8s/cert-manager/overlays/production/monitoring.yaml`
 
-## Deployment Commands
+## Manual Deployment Commands
 
 ### Deploy to Staging
-```bash
-# Deploy CRDs first
-kubectl apply -k k8s/cert-manager/base/crds/
 
-# Wait for CRDs to be established
-kubectl wait --for condition=established --timeout=60s crd/certificates.cert-manager.io
+1. **Navigate to the infrastructure repository**:
+   ```bash
+   cd solidity-security-infrastructure
+   ```
 
-# Deploy cert-manager
-kubectl apply -k k8s/cert-manager/overlays/staging/
+2. **Deploy CRDs first**:
+   ```bash
+   kubectl apply -k k8s/cert-manager/base/crds/
+   ```
 
-# Verify deployment
-kubectl get pods -n cert-manager
-kubectl get crd | grep cert-manager
-```
+3. **Wait for CRDs to be established** (manually check status):
+   ```bash
+   kubectl wait --for condition=established --timeout=60s crd/certificates.cert-manager.io
+   ```
+
+4. **Deploy cert-manager**:
+   ```bash
+   kubectl apply -k k8s/cert-manager/overlays/staging/
+   ```
+
+5. **Verify deployment**:
+   ```bash
+   kubectl get pods -n cert-manager
+   kubectl get crd | grep cert-manager
+   ```
 
 ### Deploy to Production
-```bash
-# Deploy CRDs first
-kubectl apply -k k8s/cert-manager/base/crds/
 
-# Wait for CRDs to be established
-kubectl wait --for condition=established --timeout=60s crd/certificates.cert-manager.io
+1. **Navigate to the infrastructure repository**:
+   ```bash
+   cd solidity-security-infrastructure
+   ```
 
-# Deploy cert-manager
-kubectl apply -k k8s/cert-manager/overlays/production/
+2. **Deploy CRDs first**:
+   ```bash
+   kubectl apply -k k8s/cert-manager/base/crds/
+   ```
 
-# Verify deployment
-kubectl get pods -n cert-manager
-kubectl get crd | grep cert-manager
-```
+3. **Wait for CRDs to be established** (manually check status):
+   ```bash
+   kubectl wait --for condition=established --timeout=60s crd/certificates.cert-manager.io
+   ```
 
-## Verification Steps
+4. **Deploy cert-manager**:
+   ```bash
+   kubectl apply -k k8s/cert-manager/overlays/production/
+   ```
+
+5. **Verify deployment**:
+   ```bash
+   kubectl get pods -n cert-manager
+   kubectl get crd | grep cert-manager
+   ```
+
+## Manual Verification Steps
 
 ### 1. Check Pod Status
 ```bash
@@ -216,32 +258,36 @@ kubectl get clusterissuer
 kubectl describe clusterissuer letsencrypt-staging  # or letsencrypt-prod
 ```
 
-## Maintenance Commands
+## Manual Maintenance Commands
 
 ### Update cert-manager
-1. Update the image tags in the deployment files
-2. Apply the changes:
-```bash
-kubectl apply -k k8s/cert-manager/overlays/production/
-```
+1. **Update the image tags in the deployment files manually**
+2. **Apply the changes**:
+   ```bash
+   cd solidity-security-infrastructure
+   kubectl apply -k k8s/cert-manager/overlays/production/
+   ```
 
 ### Remove cert-manager
-```bash
-# Remove cert-manager components
-kubectl delete -k k8s/cert-manager/overlays/production/
+1. **Remove cert-manager components**:
+   ```bash
+   cd solidity-security-infrastructure
+   kubectl delete -k k8s/cert-manager/overlays/production/
+   ```
 
-# Remove CRDs (this will delete all certificates!)
-kubectl delete -k k8s/cert-manager/base/crds/
-```
+2. **Remove CRDs** (this will delete all certificates!):
+   ```bash
+   kubectl delete -k k8s/cert-manager/base/crds/
+   ```
 
-## Troubleshooting
+## Manual Troubleshooting
 
 ### Common Issues
 1. **CRDs not established**: Wait for CRDs to be ready before deploying main components
 2. **Webhook not ready**: Check webhook service and endpoint status
 3. **RBAC issues**: Verify all ClusterRoles and bindings are applied correctly
 
-### Debug Commands
+### Manual Debug Commands
 ```bash
 # Check webhook configuration
 kubectl get validatingwebhookconfiguration
@@ -253,6 +299,35 @@ kubectl auth can-i --list --as=system:serviceaccount:cert-manager:cert-manager
 # Check events
 kubectl get events -n cert-manager --sort-by='.lastTimestamp'
 ```
+
+## File Creation Workflow
+
+### Order of File Creation
+
+1. **First, create the directory structure**:
+   ```bash
+   cd solidity-security-infrastructure
+   mkdir -p k8s/cert-manager/base/{crds,rbac,webhook,cainjector,controller}
+   mkdir -p k8s/cert-manager/overlays/{staging,production}
+   ```
+
+2. **Create files in this order**:
+   - Create CRD files first
+   - Create RBAC configurations
+   - Create service account and deployment files
+   - Create kustomization files
+   - Create overlay configurations
+
+3. **Commit to git after each major component**:
+   ```bash
+   git add k8s/cert-manager/base/crds/
+   git commit -m "Add cert-manager CRDs"
+   
+   git add k8s/cert-manager/base/rbac/
+   git commit -m "Add cert-manager RBAC configuration"
+   
+   # Continue for each component...
+   ```
 
 ## Next Steps
 
