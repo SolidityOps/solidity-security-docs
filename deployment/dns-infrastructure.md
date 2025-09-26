@@ -284,7 +284,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: admin@advancedblockchainsecurity.com
+    email: your-admin-email@your-domain.com
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
