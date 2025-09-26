@@ -1,0 +1,199 @@
+graph TB
+    %% External Users and Systems
+    User[👤 End Users]
+    Admin[👤 Administrators]
+    DevOps[👤 DevOps Engineers]
+    External[🔗 External Systems<br/>JIRA, Slack, Teams]
+
+    %% DNS and CDN Layer
+    User --> Route53[🌐 Route 53<br/>DNS Management]
+    Admin --> Route53
+    Route53 --> CloudFront[🚀 CloudFront CDN<br/>Global Distribution]
+
+    %% Security Layer
+    CloudFront --> WAF[🛡️ AWS WAF<br/>Web Application Firewall]
+    WAF --> ALB[⚖️ Application Load Balancer<br/>SSL Termination]
+
+    %% VPC Network Layer
+    subgraph VPC["🏢 AWS VPC (10.0.0.0/16)"]
+        direction TB
+
+        %% Public Subnets
+        subgraph PublicSubnets["🌐 Public Subnets (Multi-AZ)"]
+            ALB
+            NATGateway[🚪 NAT Gateway]
+            IGW[🌍 Internet Gateway]
+        end
+
+        %% Private Subnets
+        subgraph PrivateSubnets["🔒 Private Subnets (Multi-AZ)"]
+            direction TB
+
+            %% EKS Cluster
+            subgraph EKS["☸️ Amazon EKS Cluster"]
+                direction TB
+
+                %% System Namespaces
+                subgraph SystemNS["🔧 System Namespaces"]
+                    IstioSystem[🕸️ Istio Service Mesh<br/>Traffic Management & mTLS]
+                    ArgoCD[🔄 ArgoCD<br/>GitOps Deployment]
+                    CertManager[🔐 cert-manager<br/>Certificate Management]
+                    ExternalSecrets[🔑 External Secrets Operator<br/>AWS Secrets Integration]
+                    VaultNS[🏛️ HashiCorp Vault<br/>Secret Management]
+                end
+
+                %% Monitoring Namespace
+                subgraph MonitoringNS["📊 Monitoring Stack"]
+                    Prometheus[📈 Prometheus<br/>Metrics Collection]
+                    Grafana[📊 Grafana<br/>Visualization & Dashboards]
+                    Jaeger[🔍 Jaeger<br/>Distributed Tracing]
+                    Kiali[🕷️ Kiali<br/>Service Mesh Visualization]
+                end
+
+                %% Application Namespaces
+                subgraph AppNS["🚀 Application Services"]
+                    direction TB
+
+                    %% Frontend Services
+                    subgraph Frontend["🎨 Frontend Applications"]
+                        UICore[🧩 UI Core<br/>Shared Components<br/>React/TypeScript]
+                        Dashboard[📊 Dashboard<br/>Main Interface<br/>React/TypeScript]
+                        Findings[🔍 Findings<br/>Results Management<br/>React/TypeScript]
+                        Analysis[⚡ Analysis<br/>Workflow Interface<br/>React/TypeScript]
+                    end
+
+                    %% Backend Services
+                    subgraph Backend["⚙️ Backend Services"]
+                        APIService[🌐 API Service<br/>FastAPI Gateway<br/>Python]
+                        ToolIntegration[🔧 Tool Integration<br/>Security Tools<br/>Python + Rust]
+                        IntelligenceEngine[🧠 Intelligence Engine<br/>ML & AI Analysis<br/>Python + Rust]
+                        Orchestration[🎼 Orchestration<br/>Workflow Management<br/>Python/Celery]
+                        DataService[💾 Data Service<br/>Database Layer<br/>Python + Rust]
+                        Notification[📢 Notification<br/>Real-time Updates<br/>Node.js/TypeScript]
+                        ContractParser[📝 Contract Parser<br/>Solidity Parsing<br/>Pure Rust]
+                    end
+                end
+
+                %% Security Tools Namespace
+                subgraph ToolsNS["🛠️ Security Tools"]
+                    Slither[🐍 Slither<br/>Python Static Analyzer]
+                    Aderyn[🦀 Aderyn<br/>Rust Static Analyzer]
+                    MythX[🔮 MythX<br/>Symbolic Execution]
+                    SolidityMetrics[📏 Solidity-Metrics<br/>Code Metrics]
+                end
+            end
+
+            %% AWS Managed Databases
+            RDS[(🗄️ Amazon RDS<br/>PostgreSQL 15<br/>Multi-AZ + Read Replicas)]
+            ElastiCache[(⚡ ElastiCache<br/>Redis Cluster<br/>Sharded + Multi-AZ)]
+        end
+    end
+
+    %% AWS Storage Services
+    subgraph Storage["💽 AWS Storage Services"]
+        S3Contract[🗂️ S3 Contracts<br/>Source Code Storage]
+        S3Results[📋 S3 Results<br/>Analysis Results]
+        S3Backup[💾 S3 Backups<br/>Database Backups]
+        EFS[📁 EFS<br/>Shared File System]
+    end
+
+    %% AWS Security Services
+    subgraph Security["🔐 AWS Security Services"]
+        IAM[👤 IAM<br/>Identity Management]
+        SecretsManager[🔑 Secrets Manager<br/>Credential Storage]
+        KMS[🗝️ KMS<br/>Key Management]
+        ACM[📜 Certificate Manager<br/>SSL/TLS Certificates]
+    end
+
+    %% AWS Monitoring Services
+    subgraph AWSMonitoring["📊 AWS Monitoring"]
+        CloudWatch[📈 CloudWatch<br/>Metrics & Logs]
+        CloudTrail[📝 CloudTrail<br/>Audit Logging]
+        Config[⚙️ AWS Config<br/>Configuration Compliance]
+        GuardDuty[🛡️ GuardDuty<br/>Threat Detection]
+    end
+
+    %% Container Registry
+    ECR[📦 Amazon ECR<br/>Container Registry<br/>Image Scanning]
+
+    %% External Services
+    subgraph ExternalServices["🌐 External Services"]
+        GitHub[📚 GitHub<br/>Source Code & CI/CD]
+        Cloudflare[☁️ Cloudflare<br/>DNS & CDN]
+        LetsEncrypt[🔒 Let's Encrypt<br/>SSL Certificates]
+    end
+
+    %% Service Connections
+    ALB --> Frontend
+    Frontend --> APIService
+    APIService --> Backend
+
+    %% Backend Service Interconnections
+    APIService <--> DataService
+    APIService <--> Orchestration
+    Orchestration <--> ToolIntegration
+    ToolIntegration <--> ToolsNS
+    ToolIntegration <--> ContractParser
+    IntelligenceEngine <--> DataService
+    Orchestration <--> IntelligenceEngine
+    Notification <--> APIService
+    DataService <--> RDS
+    DataService <--> ElastiCache
+
+    %% Storage Connections
+    ContractParser <--> S3Contract
+    DataService <--> S3Results
+    RDS <--> S3Backup
+    EKS <--> EFS
+
+    %% Security Connections
+    EKS <--> IAM
+    EKS <--> SecretsManager
+    VaultNS <--> SecretsManager
+    ExternalSecrets <--> SecretsManager
+    ALB <--> ACM
+    EKS <--> KMS
+
+    %% Monitoring Connections
+    EKS --> CloudWatch
+    EKS --> CloudTrail
+    EKS --> Config
+    VPC --> GuardDuty
+    Prometheus --> CloudWatch
+    Grafana --> Prometheus
+    Jaeger --> EKS
+
+    %% CI/CD Connections
+    GitHub --> ECR
+    ECR --> ArgoCD
+    ArgoCD --> EKS
+
+    %% External Integrations
+    Notification <--> External
+    CertManager <--> LetsEncrypt
+    Route53 <--> Cloudflare
+
+    %% Infrastructure as Code
+    DevOps --> GitHub
+    GitHub --> ArgoCD
+
+    %% Styling
+    classDef aws fill:#FF9900,stroke:#333,stroke-width:2px,color:#fff
+    classDef k8s fill:#326CE5,stroke:#333,stroke-width:2px,color:#fff
+    classDef app fill:#4CAF50,stroke:#333,stroke-width:2px,color:#fff
+    classDef frontend fill:#2196F3,stroke:#333,stroke-width:2px,color:#fff
+    classDef backend fill:#FF5722,stroke:#333,stroke-width:2px,color:#fff
+    classDef tools fill:#9C27B0,stroke:#333,stroke-width:2px,color:#fff
+    classDef security fill:#F44336,stroke:#333,stroke-width:2px,color:#fff
+    classDef monitoring fill:#FF9800,stroke:#333,stroke-width:2px,color:#fff
+    classDef storage fill:#795548,stroke:#333,stroke-width:2px,color:#fff
+    classDef external fill:#607D8B,stroke:#333,stroke-width:2px,color:#fff
+
+    class Route53,ALB,WAF,CloudFront,RDS,ElastiCache,S3Contract,S3Results,S3Backup,EFS,IAM,SecretsManager,KMS,ACM,CloudWatch,CloudTrail,Config,GuardDuty,ECR aws
+    class EKS,IstioSystem,ArgoCD,CertManager,ExternalSecrets,VaultNS k8s
+    class APIService,DataService,Orchestration,IntelligenceEngine,ContractParser app
+    class UICore,Dashboard,Findings,Analysis frontend
+    class ToolIntegration,Notification backend
+    class Slither,Aderyn,MythX,SolidityMetrics tools
+    class Prometheus,Grafana,Jaeger,Kiali monitoring
+    class GitHub,Cloudflare,LetsEncrypt,External external
