@@ -147,13 +147,13 @@ The Solidity Security Platform is built on AWS with a cloud-native, microservice
 ### Non-AWS Infrastructure Components
 
 #### Secret Management
-- **HashiCorp Vault Community Edition**
-  - Centralized secret management
-  - Dynamic secrets for databases
-  - PKI certificate management
-  - Kubernetes authentication integration
-  - High availability with Consul backend
-  - Deployed on EKS with persistent storage
+- **AWS Secrets Manager**
+  - Centralized secret management and storage
+  - Automatic rotation for RDS and other AWS services
+  - Fine-grained access control with IAM policies
+  - Encryption at rest using AWS KMS
+  - Cross-service integration with AWS resources
+  - Cost-effective pay-per-secret pricing model
 
 #### Service Mesh
 - **Istio Service Mesh**
@@ -237,7 +237,7 @@ Staging VPC (10.1.0.0/16)
 - **EKS Node Security Group**: Internal cluster communication
 - **RDS Security Group**: PostgreSQL from EKS nodes only
 - **Redis Security Group**: Redis protocol from EKS nodes only
-- **Vault Security Group**: Vault API from EKS nodes only
+- **External Services Security Group**: External service APIs from EKS nodes only
 
 ## Deployment Architecture
 
@@ -248,7 +248,7 @@ Staging VPC (10.1.0.0/16)
 ├── argocd               # ArgoCD deployment
 ├── cert-manager         # Certificate management
 ├── external-secrets     # External secrets operator
-├── vault                # HashiCorp Vault
+├── external-secrets     # External Secrets Operator for AWS Secrets Manager
 ├── kube-system         # System components
 ├── security-platform   # Main application services
 │   ├── api-service
