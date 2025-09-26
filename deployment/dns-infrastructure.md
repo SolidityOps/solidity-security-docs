@@ -526,9 +526,9 @@ After successful DNS deployment:
 - [cert-manager Documentation](https://cert-manager.io/docs/)
 
 ### Emergency Contacts
-- **Infrastructure Team**: infrastructure@advancedblockchainsecurity.com
-- **DevOps Support**: devops@advancedblockchainsecurity.com
-- **Security Team**: security@advancedblockchainsecurity.com
+- **Infrastructure Team**: [Contact via internal ticketing system](https://intranet.advancedblockchainsecurity.com/support)
+- **DevOps Support**: [Contact via internal ticketing system](https://intranet.advancedblockchainsecurity.com/support)
+- **Security Team**: [Contact via internal ticketing system](https://intranet.advancedblockchainsecurity.com/support)
 
 ---
 
