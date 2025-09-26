@@ -96,9 +96,10 @@ echo "Production LB: $TF_VAR_production_lb_ip"
 
 ### Step 1: Repository Setup
 ```bash
-# Navigate to DNS infrastructure directory
-cd /Users/pwner/Git/ABS/solidity-security-aws-infrastructure/cloudflare
+# Navigate to the DNS infrastructure directory from the project root
+cd cloudflare
 
+# (If you are not in the project root, adjust the path accordingly or navigate there first)
 # Verify directory structure
 ls -la
 # Should show: terraform/, dns-records/, subdomain-configs/, scripts/
