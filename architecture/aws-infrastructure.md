@@ -244,11 +244,11 @@ Staging VPC (10.1.0.0/16)
 ### Kubernetes Namespaces
 ```
 ├── istio-system          # Istio control plane
-├── monitoring            # Prometheus, Grafana, Jaeger
-├── argocd               # ArgoCD deployment
-├── cert-manager         # Certificate management
-├── external-secrets     # External secrets operator
-├── external-secrets     # External Secrets Operator for AWS Secrets Manager
+├── monitoring-staging and monitoring-production    # Prometheus, Grafana, Jaeger
+├── argocd-staging and argocd-production          # ArgoCD deployment
+├── cert-manager-staging and cert-manager-production # Certificate management
+├── external-secrets-staging and external-secrets-production # External secrets operator
+├── external-secrets-staging and external-secrets-production # External Secrets Operator for HashiCorp Vault Community Edition
 ├── kube-system         # System components
 ├── security-platform   # Main application services
 │   ├── api-service
