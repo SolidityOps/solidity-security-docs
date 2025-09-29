@@ -243,7 +243,7 @@ Staging VPC (10.1.0.0/16)
 
 ### Kubernetes Namespaces
 ```
-├── istio-system          # Istio control plane
+├── istio-system-staging and istio-system-production    # Istio control plane
 ├── monitoring-staging and monitoring-production    # Prometheus, Grafana, Jaeger
 ├── argocd-staging and argocd-production          # ArgoCD deployment
 ├── cert-manager-staging and cert-manager-production # Certificate management
