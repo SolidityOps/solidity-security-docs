@@ -46,6 +46,12 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
 
 ## Complete IAM Policy - Production Ready
 
+**Note**: Due to AWS IAM policy size limits (6144 characters), this has been split into two policies.
+
+### Policy 1: Core Infrastructure (Attach to user/role)
+
+Policy Name: `CoreInfrastructure`
+
 ```json
 {
     "Version": "2012-10-17",
@@ -63,6 +69,7 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "ec2:CreateSecurityGroup",
                 "ec2:CreateNetworkAcl",
                 "ec2:CreateVpcEndpoint",
+                "ec2:DeleteVpcEndpoints",
                 "ec2:CreateFlowLogs",
                 "ec2:AttachInternetGateway",
                 "ec2:AssociateRouteTable",
@@ -103,7 +110,6 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "ec2:DeleteRoute",
                 "ec2:DeleteSecurityGroup",
                 "ec2:DeleteNetworkAcl",
-                "ec2:DeleteVpcEndpoint",
                 "ec2:DeleteFlowLogs",
                 "ec2:DetachInternetGateway",
                 "ec2:DisassociateRouteTable",
@@ -183,7 +189,6 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "iam:CreateRole",
                 "iam:CreatePolicy",
                 "iam:CreateInstanceProfile",
-                "iam:CreateServiceLinkedRole",
                 "iam:AttachRolePolicy",
                 "iam:DetachRolePolicy",
                 "iam:AttachUserPolicy",
@@ -213,7 +218,6 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "iam:UntagPolicy",
                 "iam:TagInstanceProfile",
                 "iam:UntagInstanceProfile",
-                "iam:PassRole",
                 "iam:CreateOpenIDConnectProvider",
                 "iam:DeleteOpenIDConnectProvider",
                 "iam:GetOpenIDConnectProvider",
@@ -222,6 +226,44 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "iam:UntagOpenIDConnectProvider"
             ],
             "Resource": "*"
+        },
+        {
+            "Sid": "IAMServiceLinkedRolePermissions",
+            "Effect": "Allow",
+            "Action": [
+                "iam:CreateServiceLinkedRole"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "iam:AWSServiceName": [
+                        "eks.amazonaws.com",
+                        "eks-nodegroup.amazonaws.com",
+                        "elasticloadbalancing.amazonaws.com",
+                        "autoscaling.amazonaws.com",
+                        "elasticache.amazonaws.com"
+                    ]
+                }
+            }
+        },
+        {
+            "Sid": "IAMPassRolePermissions",
+            "Effect": "Allow",
+            "Action": [
+                "iam:PassRole"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "iam:PassedToService": [
+                        "eks.amazonaws.com",
+                        "ec2.amazonaws.com",
+                        "elasticloadbalancing.amazonaws.com",
+                        "autoscaling.amazonaws.com",
+                        "ecs.amazonaws.com"
+                    ]
+                }
+            }
         },
         {
             "Sid": "ApplicationLoadBalancerPermissions",
@@ -253,26 +295,19 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "elasticloadbalancing:DescribeTags"
             ],
             "Resource": "*"
-        },
-        {
-            "Sid": "CloudWatchLogsPermissions",
-            "Effect": "Allow",
-            "Action": [
-                "logs:CreateLogGroup",
-                "logs:CreateLogStream",
-                "logs:DescribeLogGroups",
-                "logs:DescribeLogStreams",
-                "logs:PutLogEvents",
-                "logs:PutRetentionPolicy",
-                "logs:DeleteLogGroup",
-                "logs:DeleteLogStream",
-                "logs:DeleteRetentionPolicy",
-                "logs:TagLogGroup",
-                "logs:UntagLogGroup",
-                "logs:ListTagsLogGroup"
-            ],
-            "Resource": "*"
-        },
+        }
+    ]
+}
+```
+
+### Policy 2: Additional Services (Attach to same user/role)
+
+Policy Name: `AdditionalServices`
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
         {
             "Sid": "SecretsManagerPermissions",
             "Effect": "Allow",
@@ -303,7 +338,7 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "ecr:DescribeImageScanFindings",
                 "ecr:ListImages",
                 "ecr:GetRepositoryPolicy",
-                "ecr:PutRepositoryPolicy",
+                "ecr:SetRepositoryPolicy",
                 "ecr:DeleteRepositoryPolicy",
                 "ecr:SetRepositoryPolicy",
                 "ecr:GetLifecyclePolicy",
@@ -328,10 +363,10 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "s3:DeleteBucket",
                 "s3:GetBucketLocation",
                 "s3:GetBucketVersioning",
-                "s3:GetBucketEncryption",
+                "s3:GetEncryptionConfiguration",
                 "s3:GetBucketPublicAccessBlock",
                 "s3:PutBucketVersioning",
-                "s3:PutBucketEncryption",
+                "s3:PutEncryptionConfiguration",
                 "s3:PutBucketPublicAccessBlock",
                 "s3:PutBucketPolicy",
                 "s3:GetBucketPolicy",
@@ -387,19 +422,6 @@ Based on analysis of Sprint tasks 1.1-1.18, the following AWS services are deplo
                 "sts:AssumeRoleWithWebIdentity",
                 "sts:GetAccessKeyInfo",
                 "sts:GetSessionToken"
-            ],
-            "Resource": "*"
-        },
-        {
-            "Sid": "CloudWatchPermissions",
-            "Effect": "Allow",
-            "Action": [
-                "cloudwatch:PutMetricData",
-                "cloudwatch:GetMetricStatistics",
-                "cloudwatch:ListMetrics",
-                "cloudwatch:DescribeAlarms",
-                "cloudwatch:PutMetricAlarm",
-                "cloudwatch:DeleteAlarms"
             ],
             "Resource": "*"
         }
@@ -476,9 +498,14 @@ aws iam create-user --user-name terraform-deploy-user
 # Option A: Attach admin policy (development)
 aws iam attach-user-policy --user-name terraform-deploy-user --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
 
-# Option B: Create and attach custom policy (production)
-aws iam create-policy --policy-name SoliditySecurityInfrastructurePolicy --policy-document file://infrastructure-policy.json
-aws iam attach-user-policy --user-name terraform-deploy-user --policy-arn arn:aws:iam::ACCOUNT-ID:policy/SoliditySecurityInfrastructurePolicy
+# Option B: Create and attach custom policies (production)
+# Create Policy 1 (Core Infrastructure)
+aws iam create-policy --policy-name SoliditySecurityInfrastructurePolicy1 --policy-document file://infrastructure-policy-1.json
+aws iam attach-user-policy --user-name terraform-deploy-user --policy-arn arn:aws:iam::ACCOUNT-ID:policy/SoliditySecurityInfrastructurePolicy1
+
+# Create Policy 2 (Additional Services)
+aws iam create-policy --policy-name SoliditySecurityInfrastructurePolicy2 --policy-document file://infrastructure-policy-2.json
+aws iam attach-user-policy --user-name terraform-deploy-user --policy-arn arn:aws:iam::ACCOUNT-ID:policy/SoliditySecurityInfrastructurePolicy2
 ```
 
 ### Step 3: Generate Access Keys
