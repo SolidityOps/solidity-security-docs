@@ -15,8 +15,8 @@ Ensure you have the required tools installed:
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 rustup update stable
 
-# Python 3.11+
-python3 --version  # Should be 3.11+
+# Python 3.8+ (including 3.13 support)
+python3 --version  # Should be 3.8+ (3.13 fully supported)
 pip install --upgrade pip
 
 # Node.js 18+
