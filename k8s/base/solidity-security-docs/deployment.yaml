@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: solidity-security-docs
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: solidity-security-docs
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: solidity-security-docs
+    spec:
+      serviceAccountName: solidity-security-docs
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+      containers:
+      - name: docs-server
+        image: solidity-security-docs:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3000
+          name: http
+          protocol: TCP
+        - containerPort: 3001
+          name: search
+          protocol: TCP
+        envFrom:
+        - configMapRef:
+            name: solidity-security-docs-config
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "300m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 3
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 10
+          timeoutSeconds: 3
+          failureThreshold: 30
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: tmp
+          mountPath: /tmp
+        - name: docs-content
+          mountPath: /app/docs
+          readOnly: true
+        - name: search-index
+          mountPath: /app/search
+        - name: static-assets
+          mountPath: /app/public
+          readOnly: true
+      # Search indexing sidecar container
+      - name: search-indexer
+        image: solidity-security-docs-indexer:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 9200
+          name: elasticsearch
+          protocol: TCP
+        env:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: CLUSTER_NAME
+          value: "docs-search"
+        - name: DISCOVERY_SEED_HOSTS
+          value: "solidity-security-docs-search"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          capabilities:
+            drop:
+            - ALL
+        volumeMounts:
+        - name: search-index
+          mountPath: /usr/share/elasticsearch/data
+        - name: tmp
+          mountPath: /tmp
+      volumes:
+      - name: tmp
+        emptyDir: {}
+      - name: docs-content
+        configMap:
+          name: solidity-security-docs-content
+      - name: search-index
+        emptyDir:
+          sizeLimit: 2Gi
+      - name: static-assets
+        configMap:
+          name: solidity-security-docs-assets
+      nodeSelector:
+        kubernetes.io/arch: amd64
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - solidity-security-docs
+              topologyKey: kubernetes.io/hostname
+      terminationGracePeriodSeconds: 30

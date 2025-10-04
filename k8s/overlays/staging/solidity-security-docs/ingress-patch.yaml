@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: solidity-security-docs
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-staging"
+    nginx.ingress.kubernetes.io/rate-limit: "100"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+spec:
+  tls:
+  - hosts:
+    - docs-staging.solidity-security.dev
+    secretName: solidity-security-docs-tls-staging
+  rules:
+  - host: docs-staging.solidity-security.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: solidity-security-docs
+            port:
+              number: 3000
+      - path: /search
+        pathType: Prefix
+        backend:
+          service:
+            name: solidity-security-docs
+            port:
+              number: 3001
