@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: solidity-security-docs
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    nginx.ingress.kubernetes.io/rate-limit: "1000"
+    nginx.ingress.kubernetes.io/rate-limit-window: "1m"
+    nginx.ingress.kubernetes.io/server-snippet: |
+      gzip on;
+      gzip_types text/plain text/css text/xml text/javascript application/javascript application/xml+rss application/json;
+      expires 1y;
+      add_header Cache-Control "public, immutable";
+spec:
+  tls:
+  - hosts:
+    - docs.solidity-security.com
+    secretName: solidity-security-docs-tls-prod
+  rules:
+  - host: docs.solidity-security.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: solidity-security-docs
+            port:
+              number: 3000
+      - path: /search
+        pathType: Prefix
+        backend:
+          service:
+            name: solidity-security-docs
+            port:
+              number: 3001

@@ -1,0 +1,46 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- namespace.yaml
+- ../../../base/solidity-security-docs/
+- hpa.yaml
+- pdb.yaml
+- networkpolicy.yaml
+- servicemonitor.yaml
+- resourcequota.yaml
+- limitrange.yaml
+
+namespace: docs-prod
+
+patches:
+- path: deployment-patch.yaml
+  target:
+    kind: Deployment
+    name: solidity-security-docs
+- path: configmap-patch.yaml
+  target:
+    kind: ConfigMap
+    name: solidity-security-docs-config
+- path: ingress-patch.yaml
+  target:
+    kind: Ingress
+    name: solidity-security-docs
+
+images:
+- name: solidity-security-docs
+  newTag: production-latest
+- name: solidity-security-docs-indexer
+  newTag: production-latest
+
+labels:
+- includeSelectors: true
+  pairs:
+    app.kubernetes.io/name: solidity-security-docs
+    app.kubernetes.io/instance: production-docs
+    app.kubernetes.io/version: production-latest
+    app.kubernetes.io/component: documentation
+    app.kubernetes.io/part-of: solidity-security-platform
+    app.kubernetes.io/managed-by: kustomize
+    environment: production
+    team: platform

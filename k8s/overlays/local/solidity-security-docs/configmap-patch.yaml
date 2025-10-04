@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: solidity-security-docs-config
+data:
+  # Local Development Configuration
+  LOG_LEVEL: "debug"
+  NODE_ENV: "development"
+  ENVIRONMENT: "local"
+
+  # Development features
+  ENABLE_LIVE_RELOAD: "true"
+  ENABLE_DEBUG_ENDPOINTS: "true"
+  ENABLE_HOT_RELOAD: "true"
+
+  # Local URLs
+  BASE_URL: "http://docs.solidity-security.local"
+
+  # Reduced resource usage
+  CACHE_TTL: "60"
+  SEARCH_RESULTS_LIMIT: "10"
+
+  # Development search settings
+  ELASTICSEARCH_URL: "http://localhost:9200"

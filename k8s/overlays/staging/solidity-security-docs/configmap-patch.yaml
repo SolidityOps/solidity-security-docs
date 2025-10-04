@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: solidity-security-docs-config
+data:
+  # Staging Configuration
+  LOG_LEVEL: "debug"
+  NODE_ENV: "staging"
+  ENVIRONMENT: "staging"
+
+  # Staging URLs
+  BASE_URL: "https://docs-staging.solidity-security.dev"
+
+  # Staging settings
+  CACHE_TTL: "1800"
+  SEARCH_RESULTS_LIMIT: "15"
+
+  # Enable monitoring
+  ENABLE_METRICS: "true"

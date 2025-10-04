@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: docs-staging
+  labels:
+    app.kubernetes.io/name: solidity-security-docs
+    app.kubernetes.io/instance: staging-docs
+    app.kubernetes.io/component: documentation
+    app.kubernetes.io/part-of: solidity-security-platform
+    app.kubernetes.io/managed-by: kustomize
+    environment: staging
+    team: platform
+    istio-injection: enabled
+  annotations:
+    scheduler.alpha.kubernetes.io/node-selector: "environment=staging"
