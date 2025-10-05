@@ -10,6 +10,11 @@ Welcome to the comprehensive documentation for the SolidityOps Security Platform
 - **[Deployment Guides](deployment/README.md)** - AWS infrastructure and Kubernetes deployment
 - **[Development Guides](development/README.md)** - Local development and testing procedures
 
+### **Development Framework**
+- **[DDD Implementation Guide](development/ddd-implementation-guide.md)** - Complete DDD patterns with examples
+- **[CQRS Patterns](development/cqrs-patterns.md)** - Command/Query separation patterns and best practices
+- **[Testing Strategies](development/testing-ddd-services.md)** - Comprehensive testing for DDD architecture
+
 ### **Quick Start Guides**
 - **[Local Development Setup](local-development/README.md)** - Get started with local development
 - **[Production Deployment](deployment/README.md)** - Deploy to AWS EKS production environment
@@ -19,6 +24,8 @@ Welcome to the comprehensive documentation for the SolidityOps Security Platform
 - **[Platform Overview](#platform-overview)** - High-level architecture and design principles
 - **[Repository Structure](#repository-structure)** - Complete repository organization
 - **[Service Architecture](#service-architecture)** - Microservice design and interactions
+- **[Domain-Driven Design](architecture/clean-architecture-decision.md)** - DDD + Clean Architecture implementation
+- **[API Service Architecture](architecture/api-service-architecture.md)** - API service design and patterns
 
 ## 🏗️ Platform Overview
 
@@ -126,6 +133,7 @@ solidity-security-monitoring     ✅ Dependency Monitoring Deployed
 - **Multi-Language Integration**: Rust, Python, TypeScript working seamlessly
 - **Production Deployment**: Kubernetes-ready with monitoring integration
 - **Security Focus**: Automated vulnerability scanning operational
+- **DDD Architecture**: Domain-Driven Design foundation with Clean Architecture + CQRS patterns
 
 ---
 
