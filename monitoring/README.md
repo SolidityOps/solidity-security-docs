@@ -6,8 +6,8 @@ This directory contains comprehensive documentation for monitoring and observabi
 
 ### Core Monitoring Services
 - **[Dependency Monitoring Service](dependency-monitoring-service.md)** - Complete dependency tracking and security scanning
-- **[Prometheus Configuration](prometheus-configuration.md)** - Metrics collection and alerting setup
 - **[Grafana Dashboards](grafana-dashboards.md)** - Visualization and dashboard management
+- **[Prometheus Configuration](prometheus-configuration.md)** - Metrics collection and alerting setup
 - **[Alert Management](alert-management.md)** - Alerting rules and notification setup
 
 ### Deployment Guides
