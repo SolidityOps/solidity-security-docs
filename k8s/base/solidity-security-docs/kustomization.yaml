@@ -11,9 +11,10 @@ resources:
 - serviceaccount.yaml
 - ingress.yaml
 
-commonLabels:
-  app.kubernetes.io/name: solidity-security-docs
-  app.kubernetes.io/component: documentation
-  app.kubernetes.io/part-of: solidity-security-platform
-  app.kubernetes.io/managed-by: kustomize
-  team: platform
+labels:
+- pairs:
+    app.kubernetes.io/name: solidity-security-docs
+    app.kubernetes.io/component: documentation
+    app.kubernetes.io/part-of: solidity-security-platform
+    app.kubernetes.io/managed-by: kustomize
+    team: platform
