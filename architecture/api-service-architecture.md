@@ -87,6 +87,9 @@ Implements technical concerns and external service integrations.
 - **Models**: SQLAlchemy ORM models
 - **Repositories**: Concrete implementations of domain repository interfaces
 - **Migrations**: Database schema evolution using Alembic
+- **Session Management**:
+  - **Async Sessions** (asyncpg): For API service endpoints
+  - **Sync Sessions** (psycopg2): For Celery workers with gevent pool
 
 #### External Services (`external/`)
 - **ContractParserClient**: HTTP client for contract parsing service

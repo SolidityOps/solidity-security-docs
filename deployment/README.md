@@ -20,6 +20,23 @@ Complete guide for deploying DNS infrastructure using Cloudflare and Terraform.
 - AWS EKS clusters with Load Balancer Controller
 - Terraform 1.0+
 
+### [Orchestration Service Deployment](./orchestration-service-deployment.md)
+Complete guide for deploying the Celery-based scan orchestration service.
+
+**Covers:**
+- Gevent worker pool configuration for high concurrency
+- Dual database session support (sync/async)
+- RedBeat scheduler for distributed environments
+- Slither integration for security analysis
+- Monitoring with Flower and Prometheus
+- Troubleshooting event loop conflicts and resource issues
+
+**Prerequisites:**
+- Kubernetes cluster (Minikube for local)
+- PostgreSQL database
+- Redis instance
+- Docker for container builds
+
 ## Coming Soon
 
 ### Infrastructure Deployment
