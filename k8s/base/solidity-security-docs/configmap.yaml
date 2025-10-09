@@ -86,7 +86,7 @@ data:
 
     ## Features
 
-    - Multi-tool integration (Slither, Aderyn, MythX, Solidity-Metrics)
+    - Multi-tool integration (Slither, Aderyn, Mythril)
     - Advanced intelligence engine for deduplication and risk scoring
     - Real-time notifications and reporting
     - Comprehensive API for automation

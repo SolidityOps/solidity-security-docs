@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Tool Integration service executes security scanners (Slither, Mythril, Aderyn, Solidity-Metrics) as isolated Kubernetes Jobs rather than embedded Python packages. This provides production-grade isolation, scalability, and security.
+The Tool Integration service executes security scanners (Slither, Mythril, Aderyn) as isolated Kubernetes Jobs rather than embedded Python packages. This provides production-grade isolation, scalability, and security.
 
 ## Architecture Decision
 
@@ -82,7 +82,6 @@ Scanner Images:
 - slither: trailofbits/eth-security-toolbox (includes slither, echidna, manticore)
 - mythril: mythril/myth:latest
 - aderyn: custom build (Rust-based)
-- solidity-metrics: custom build (Node.js-based)
 ```
 
 ## Implementation
@@ -199,8 +198,7 @@ def get_scanner_image(scanner):
     images = {
         "mythril": "mythril/myth:latest",
         "slither": "trailofbits/eth-security-toolbox:latest",
-        "aderyn": "scanner-aderyn:0.1.0",
-        "solidity-metrics": "scanner-solidity-metrics:0.1.0"
+        "aderyn": "scanner-aderyn:0.1.0"
     }
     return images[scanner]
 
@@ -330,11 +328,6 @@ Aderyn:
   memory: 512Mi (Rust efficient)
   cpu: 250m
   timeout: 180s
-
-Solidity-Metrics:
-  memory: 512Mi
-  cpu: 250m
-  timeout: 120s
 ```
 
 ## Production Deployment
