@@ -41,31 +41,7 @@ docker build -t scanner-aderyn:0.1.0 .
 - CPU limit: 1000m
 - CPU request: 250m
 
-### 2. Solidity Metrics (scanner-solidity-metrics:0.1.0)
-**Location**: `/Users/pwner/Git/ABS/solidity-security-tool-integration/scanner-images/solidity-metrics/Dockerfile`
-
-Node.js-based code metrics analyzer from ConsenSys.
-
-**Build Command**:
-```bash
-cd /Users/pwner/Git/ABS/solidity-security-tool-integration/scanner-images/solidity-metrics
-eval $(minikube docker-env)  # For local Minikube
-docker build -t scanner-solidity-metrics:0.1.0 .
-```
-
-**Features**:
-- Single-stage build (node:20-slim)
-- Installs solidity-code-metrics globally via npm
-- Generates complexity and quality metrics
-- Build time: ~13 seconds
-
-**Resource Requirements**:
-- Memory limit: 512Mi
-- Memory request: 256Mi
-- CPU limit: 1000m
-- CPU request: 250m
-
-### 3. Mythril (mythril/myth:latest)
+### 2. Mythril (mythril/myth:latest)
 **Public Image**: Available from Docker Hub
 
 Symbolic execution-based security analyzer.
@@ -81,7 +57,7 @@ docker pull mythril/myth:latest
 - CPU limit: 1000m
 - CPU request: 250m
 
-### 4. Slither (trailofbits/eth-security-toolbox:latest)
+### 3. Slither (trailofbits/eth-security-toolbox:latest)
 **Public Image**: Available from Docker Hub
 
 Static analysis framework from Trail of Bits.
@@ -109,7 +85,7 @@ job_manager = KubernetesJobManager(namespace="solidity-security")
 # Create a scanner Job
 job_name = job_manager.create_scanner_job(
     scan_id="uuid-scan-id",
-    scanner_name="aderyn",  # or "solidity-metrics", "mythril", "slither"
+    scanner_name="aderyn",  # or "mythril", "slither"
     contract_path="MyContract.sol"
 )
 
@@ -129,11 +105,9 @@ For production, push images to a container registry:
 ```bash
 # Tag for your registry
 docker tag scanner-aderyn:0.1.0 your-registry.com/scanner-aderyn:0.1.0
-docker tag scanner-solidity-metrics:0.1.0 your-registry.com/scanner-solidity-metrics:0.1.0
 
 # Push to registry
 docker push your-registry.com/scanner-aderyn:0.1.0
-docker push your-registry.com/scanner-solidity-metrics:0.1.0
 ```
 
 ### Update KubernetesJobManager
@@ -146,8 +120,7 @@ def _get_scanner_image(self, scanner: str) -> str:
     images = {
         "mythril": "mythril/myth:latest",
         "slither": "trailofbits/eth-security-toolbox:latest",
-        "aderyn": "your-registry.com/scanner-aderyn:0.1.0",
-        "solidity-metrics": "your-registry.com/scanner-solidity-metrics:0.1.0"
+        "aderyn": "your-registry.com/scanner-aderyn:0.1.0"
     }
     return images.get(scanner, "unknown-scanner:latest")
 ```
@@ -157,10 +130,8 @@ def _get_scanner_image(self, scanner: str) -> str:
 **Custom Scanner Images**:
 ```
 /Users/pwner/Git/ABS/solidity-security-tool-integration/scanner-images/
-├── aderyn/
-│   └── Dockerfile                     # Aderyn scanner image
-└── solidity-metrics/
-    └── Dockerfile                     # Solidity-Metrics scanner image
+└── aderyn/
+    └── Dockerfile                     # Aderyn scanner image
 ```
 
 **Service Images**: Each microservice has its own Dockerfile in its repository:
@@ -191,7 +162,6 @@ This validates:
 ## References
 
 - **Aderyn**: https://github.com/Cyfrin/aderyn
-- **Solidity Metrics**: https://github.com/Consensys/solidity-metrics
 - **Mythril**: https://github.com/ConsenSys/mythril
 - **Slither**: https://github.com/crytic/slither
 - **KubernetesJobManager**: `/Users/pwner/Git/ABS/solidity-security-tool-integration/src/scanners/kubernetes_job_manager.py`
