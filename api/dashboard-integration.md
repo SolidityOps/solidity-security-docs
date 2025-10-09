@@ -1,12 +1,13 @@
 # Dashboard API Integration
 
-**Last Updated**: 2025-10-06
+**Last Updated**: 2025-10-09
 **Status**: ✅ Production Ready
 **Version**: 1.0.0
+**Product Name**: BlockSecOps Dashboard
 
 ## Overview
 
-The Solidity Security Dashboard is fully integrated with the FastAPI backend, providing real-time security analysis data through a modern React-based interface.
+The BlockSecOps Dashboard is fully integrated with the FastAPI backend, providing real-time security analysis data through a modern React-based interface.
 
 ## Architecture
 

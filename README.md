@@ -1,6 +1,8 @@
 # SolidityOps Platform Documentation
 
-Welcome to the comprehensive documentation for the SolidityOps Security Platform. This repository contains technical guides, deployment procedures, and operational documentation for all platform components.
+Welcome to the comprehensive documentation for the SolidityOps Security Platform (BlockSecOps). This repository contains technical guides, deployment procedures, and operational documentation for all platform components.
+
+**Product Name**: BlockSecOps Dashboard (frontend interface)
 
 ## 📚 Documentation Structure
 
@@ -159,6 +161,7 @@ solidity-security-monitoring     ✅ Dependency Monitoring Deployed
 **Platform Stats**: 18 repositories, ~96K LOC, with 37% Rust, 43% Python, 20% TypeScript
 **Backend Status**: ✅ **MVP Complete (Sprint 8)** - Real security scanning operational
 **Frontend Status**: 🚧 **Needs Sprint 9** - Frontend pages needed for full-stack MVP
+**Dashboard Branding**: BlockSecOps Dashboard
 **Recommendation**: Sprint 9 should focus on frontend completion (Login, Contracts, Scan Results pages)
 
-This platform provides a comprehensive, secure, and high-performance solution for Solidity smart contract security analysis with enterprise-grade monitoring capabilities.
+This platform provides a comprehensive, secure, and high-performance solution for Solidity smart contract security analysis with enterprise-grade monitoring capabilities. The user-facing dashboard is branded as **BlockSecOps Dashboard**.
